@@ -483,8 +483,13 @@ private [type.typeAbstract] read[type.name](JsonReader in)
     throws IOException {
   [type.typeBuilder] builder = [type.factoryBuilder]();
     [if type.unmarshaledAttributes]
+  final boolean skipNulls = in.isLenient();
   in.beginObject();
   while (in.hasNext()) {
+    if (skipNulls && in.peek() == JsonToken.NULL) {
+      in.nextNull();
+      continue;
+    }
     eachAttribute(in, builder);
   }
   in.endObject();
